@@ -1,9 +1,10 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
-
 import AllMovies from "./AllMovies";
+import loader from "../assets/loaderLogin.gif";
 
 const Movie = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState('descending');
@@ -18,14 +19,17 @@ const Movie = () => {
     fetchMovie();
   }, []);
   const handleSearch = async () => {
+    setIsLoading(true);
     const { data } = await axios.get(
       `https://www.omdbapi.com/?s=${searchTerm}&apikey=${API_KEY}`
     );
     console.log(data.Response);
     if(data.Response==='False'){
+      setIsLoading(false);
       alert(data.Error)
     }else{
       setData(data.Search);
+      setIsLoading(false);
     }
   };
   
@@ -61,6 +65,11 @@ const Movie = () => {
         </select>
       </div>
       </div>
+      {isLoading && (
+          <>
+            <img src={loader} alt="loader" className="loader" style={{marginLeft:'40%',position:'absolute',width:'250px'}}/>
+          </>
+        )}
    <AllMovies data={data}/>
    </>
    
